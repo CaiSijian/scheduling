@@ -117,11 +117,13 @@
 巡逻岗：${dataObject['巡逻岗']}`
             const result= confirm(`${title}${template}`)
             if (result) {
+            setTimeout(() => {
                 navigator.clipboard.writeText(template).then(() => {
                     alert('已经复制到剪切板了')
                 }).catch(() => {
                     alert('出错了')
                 })
+            }, 0);
             }
         }
     </script>
