@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汇豪华庭项目排班信息生成</title>
+</head>
+
+<body>
+    <h1>汇豪华庭项目排班信息生成</h1>
+    <form style="font-size:x-large;">
+        班次：夜班
+        <br>
+        <label for="one">领班：</label>
+        <select title="领班" name="领班" id="one" style="font-size:x-large;">
+            <option value="蔡思健">蔡思健</option>
+            <option value="潘通平">潘通平</option>
+            <option value="陆兆良">陆兆良</option>
+            <option value="陆振星">陆振星</option>
+        </select>
+        <br>
+        <label for="two">1号进口岗：</label>
+        <select title="1号进口岗" name="1号进口岗" id="two" style="font-size:x-large;">
+            <option value="蔡思健">蔡思健</option>
+            <option value="潘通平">潘通平</option>
+            <option value="陆兆良">陆兆良</option>
+            <option value="陆振星">陆振星</option>
+        </select>
+        <br>
+        <label for="three">2号出口岗：</label>
+        <select title="2号出口岗" name="2号出口岗" id="three" style="font-size:x-large;">
+            <option value="蔡思健">蔡思健</option>
+            <option value="潘通平">潘通平</option>
+            <option value="陆兆良">陆兆良</option>
+            <option value="陆振星">陆振星</option>
+        </select>
+        <br>
+        <label for="four">巡逻岗：</label>
+        <select title="巡逻岗" name="巡逻岗" id="four" style="font-size:x-large;">
+            <option value="蔡思健">蔡思健</option>
+            <option value="潘通平">潘通平</option>
+            <option value="陆兆良">陆兆良</option>
+            <option value="陆振星">陆振星</option>
+        </select>
+        <div></div>
+        <br>
+        <button type="submit" style="font-size:x-large;">生成排班信息</button>
+    </form>
+    <style>
+        
+    </style>
+    <script>
+        /* 
+        汇豪华庭项目
+        秩序部 2024.6.17
+        班次：夜班
+        应到人员：4 人
+        休息人员：1 人 （陆兆良）
+        实际在岗：3 人 
+        工作安排：
+        领班：陆振星
+        1号进口岗：蔡思健
+        2号出口岗：潘通平
+        巡逻岗：陆振星
+        */
+        function initialValues(params) {
+            const selects = document.querySelectorAll('select')
+            for (const select of selects) {
+                select.value = localStorage.getItem(select.title)
+            }
+        }
+        initialValues()
+        const form2 = document.querySelector('form')
+        form2.addEventListener('submit', submit_handler)
+        function submit_handler(event) {
+            event.preventDefault()
+            const formData = new FormData(event.target)
+            /* 关键数据 */
+            const dataArray = Array.from(formData.entries())
+            const dataObject = {}
+            for (const [k, v] of dataArray) {
+                localStorage.setItem(k, v)
+                dataObject[k] = v
+            }
+            const date = new Date()
+            const [year, m, d] = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+            const title = '生成如下信息：\n'
+            const footer = '\n点击确认即可复制到剪切板'
+            /* 所有人员名字集合 */
+            const names = [
+                '蔡思健',
+                '潘通平',
+                '陆振星',
+                '陆兆良',
+            ]
+            /* 在岗人员名字集合 去重 */
+            const On_the_job_names = Array.from(new Set(dataArray.map(([k, v]) => v)))
+            /* 休息人员名字集合 */
+            const rest_namse= names.filter((name) => !On_the_job_names.includes(name))
+            /* 总人数 */
+            const totalMumberOfPeople = names.length
+            /* 在岗人数 */
+            const On_the_job_count = On_the_job_names.length
+            /* 休息人数 */
+            const restCount =rest_namse.length
+            const template = `汇豪华庭项目
+秩序部 ${year}.${m}.${d}
+班次：夜班
+应到人员：${totalMumberOfPeople} 人
+休息人员：${restCount} 人 ${restCount?`（${rest_namse.join('，')}）`:''}
+实际在岗：${On_the_job_count} 人 
+工作安排：
+领班：${dataObject['领班']}
+1号进口岗：${dataObject['1号进口岗']}
+2号出口岗：${dataObject['2号出口岗']}
+巡逻岗：${dataObject['巡逻岗']}`
+            const result= confirm(`${title}${template}`)
+            if (result) {
+                navigator.clipboard.writeText(template).then(() => {
+                    alert('已经复制到剪切板了')
+                }).catch(() => {
+                    alert('出错了')
+                })
+            }
+        }
+        /* 汇豪华庭项目
+秩序部 2024.6.19
+班次：夜班
+应到人员：4 人
+休息人员：0 人 
+实际在岗：4 人 
+工作安排：
+领班：陆振星
+1号进口岗：蔡思健
+2号出口岗：潘通平
+巡逻岗：陆兆良 */
+    </script>
+</body>
+
+</html>
